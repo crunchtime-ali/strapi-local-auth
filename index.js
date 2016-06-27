@@ -8,50 +8,55 @@ const passportLocal = require('passport-local');
 
 module.exports = function (strapi) {
 	const hook = {
-
 		/**
 		 * Default options
 		 */
-
 		defaults: {
 		},
-
     /**
      * Initialize the hook
      */
+		initialize: function (cb) {
+			console.log('strapi-auth init called');
+			strapi.after(["hook:generic-session:loaded"], () => {
 
-    initialize: function (cb) {
-
-			strapi.on("hook:'generic-session':loaded", () => {
-
-				console.log("strapi-passport initialized");
+				console.log('strapi-local-auth initialized');
 
 
-			strapi.app.use(passport.initialize());
-			strapi.app.use(passport.session());
+				strapi.app.use(passport.initialize());
+				strapi.app.use(passport.session());
 
-			var user = { id: 1, username: 'test' }
+				var user = {id: 1, username: 'test'};
 
-passport.serializeUser(function(user, done) {
-  done(null, user.id)
-})
+				passport.serializeUser(function (user, done) {
+					done(null, user.id);
+				});
 
-passport.deserializeUser(function(id, done) {
-  done(null, user)
-})
+				passport.deserializeUser(function (id, done) {
+					done(null, user);
+				});
 
-var LocalStrategy = require('passport-local').Strategy
-passport.use(new LocalStrategy(function(username, password, done) {
-  // retrieve user ...
-  if (username === 'test' && password === 'test') {
-    done(null, user)
-  } else {
-    done(null, false)
-  }
-}));
-});
+				var LocalStrategy = passportLocal.Strategy;
+				passport.use(new LocalStrategy(function (username, password, done) {
+					// retrieve user ...
+					if (username === 'test' && password === 'test') {
+						done(null, user);
+					} else {
+						done(null, false);
+					}
+				}));
 
-			/*passport.serializeUser(function(user, done) {
+				// Make this passport instance globally available
+				//strapi.passport = passport;
+				console.log('local auth strategy chosen');
+				cb();
+			});
+		}
+	};
+	return hook;
+};
+
+			/* passport.serializeUser(function(user, done) {
 				strapi.log.info("serialize User called", user);
 			  done(null, user.id)
 			})
@@ -88,13 +93,3 @@ passport.use(new LocalStrategy(function(username, password, done) {
 					done(null, false);
 				});
 			}));*/
-
-			// Make this passport instance globally available
-			// strapi.passport = passport;
-			console.log("local auth strategy chosen");
-      cb();
-    }
-  };
-
-  return hook;
-};
