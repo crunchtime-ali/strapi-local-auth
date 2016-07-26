@@ -26,7 +26,7 @@ module.exports = function (strapi) {
 				strapi.app.use(passport.initialize());
 				strapi.app.use(passport.session());
 
-				var user = {id: 1, username: 'test'};
+				var user = {id: 1, username: 'Fire'};
 
 				passport.serializeUser(function(user, done) {
 					strapi.log.info("serialize User called", user);
@@ -35,7 +35,7 @@ module.exports = function (strapi) {
 
 
 				passport.deserializeUser(function(id, done) {
-					console.log(id)
+					debugger;
 					strapi.log.info("deserializeUser called");
 					strapi.services.userlogin.fetch({id: id})
 					.then(function(user) {
@@ -53,13 +53,13 @@ module.exports = function (strapi) {
 
 				var LocalStrategy = passportLocal.Strategy;
 				passport.use(new LocalStrategy((username, password, done) => {
+
 					strapi.log.info("executing local strategy");
 
 					// Retrieve user
 					strapi.services.userlogin.getUser(username, password)
 					.then(function(user) {
-						// console.log("resolved to", user);
-						done(null, {id: user.attributes.id , username: user.attributes.username, role: user.attributes.role});
+						done(null, {id: user.relations.user.id , username: user.attributes.username, role: user.attributes.role});
 					})
 					.catch(function(err) {
 						strapi.log.info("Login Error", err);
@@ -67,8 +67,6 @@ module.exports = function (strapi) {
 					});
 				}));
 
-				// Make this passport instance globally available
-				//strapi.passport = passport;
 				console.log('local auth strategy chosen');
 				cb();
 			});
