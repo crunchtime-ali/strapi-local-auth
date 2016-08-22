@@ -35,9 +35,8 @@ module.exports = function (strapi) {
 
 
 				passport.deserializeUser(function(id, done) {
-					debugger;
 					strapi.log.info("deserializeUser called");
-					strapi.services.userlogin.fetch({id: id})
+					strapi.services.jsonapi.fetch(strapi.models.userlogin, {id: id})
 					.then(function(user) {
 						if (user !== false) {
 							done(null, {id: user.attributes.id , username: user.attributes.username});
