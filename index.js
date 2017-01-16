@@ -30,7 +30,6 @@ module.exports = function (strapi) {
         })
 
         passport.deserializeUser(function (id, done) {
-          strapi.log.info('deserializeUser called with ID', id)
           strapi.services.jsonapi.fetch(strapi.models.user, {id: id}, { include:[] })
             .then(function (user) {
               if (user !== false && user !== null) {
@@ -51,12 +50,10 @@ module.exports = function (strapi) {
           usernameField: 'email'
         },
         (username, password, done) => {
-          strapi.log.info('executing local strategy')
-
           // Retrieve user
-          console.log(username, password)
           strapi.services.userlogin.getUser(username, password)
             .then(function (user) {
+              console.log(user)
               done(null, {id: user.relations.user.id, email: user.attributes.email, role: user.relations.user.role})
             })
             .catch(function (err) {
