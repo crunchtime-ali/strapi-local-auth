@@ -53,8 +53,8 @@ module.exports = function (strapi) {
           // Retrieve user
           strapi.services.userlogin.getUser(username, password)
             .then(function (user) {
-              console.log(user)
-              done(null, {id: user.relations.user.id, email: user.attributes.email, role: user.relations.user.role})
+              user = user.toJSON() || user
+              done(null, {id: user.user.id, email: user.email, role: user.user.role})
             })
             .catch(function (err) {
               strapi.log.info('Login Error', err)
