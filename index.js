@@ -34,7 +34,7 @@ module.exports = function (strapi) {
           strapi.services.jsonapi.fetch(strapi.models.user, {id: id}, { include:[] })
             .then(function (user) {
               if (user !== false && user !== null) {
-                done(null, {id: user.attributes.id})
+                done(null, {id: user.attributes.id, role: user.attributes.role})
               } else {
                 done(null, false, {message: "Couldn't retrieve user"})
               }
@@ -57,7 +57,7 @@ module.exports = function (strapi) {
           console.log(username, password)
           strapi.services.userlogin.getUser(username, password)
             .then(function (user) {
-              done(null, {id: user.relations.user.id, email: user.attributes.email, role: user.attributes.role})
+              done(null, {id: user.relations.user.id, email: user.attributes.email, role: user.relations.user.attributes.role})
             })
             .catch(function (err) {
               strapi.log.info('Login Error', err)
