@@ -30,11 +30,10 @@ module.exports = function (strapi) {
         })
 
         passport.deserializeUser(function (id, done) {
-          strapi.log.info('deserializeUser called with ID', id)
           strapi.services.jsonapi.fetch(strapi.models.user, {id: id}, { include:[] })
             .then(function (user) {
               if (user !== false && user !== null) {
-                done(null, {id: user.attributes.id})
+                done(null, {id: user.attributes.id, role: user.attributes.role})
               } else {
                 done(null, false, {message: "Couldn't retrieve user"})
               }
@@ -51,13 +50,11 @@ module.exports = function (strapi) {
           usernameField: 'email'
         },
         (username, password, done) => {
-          strapi.log.info('executing local strategy')
-
           // Retrieve user
-          console.log(username, password)
           strapi.services.userlogin.getUser(username, password)
             .then(function (user) {
-              done(null, {id: user.relations.user.id, email: user.attributes.email, role: user.attributes.role})
+              user = user.toJSON() || user
+              done(null, {id: user.user.id, email: user.email, role: user.user.role})
             })
             .catch(function (err) {
               strapi.log.info('Login Error', err)
