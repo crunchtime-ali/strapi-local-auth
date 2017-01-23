@@ -26,14 +26,14 @@ module.exports = function (strapi) {
 
         passport.serializeUser(function (user, done) {
           strapi.log.info('serialize User called', user)
-          done(null, user.id)
+          done(null, user)
         })
 
-        passport.deserializeUser(function (id, done) {
-          strapi.services.jsonapi.fetch(strapi.models.user, {id: id}, { include:[] })
+        passport.deserializeUser(function (userSession, done) {
+          strapi.services.jsonapi.fetch(strapi.models.user, {id: userSession.id}, { include:[] })
             .then(function (user) {
               if (user !== false && user !== null) {
-                done(null, {id: user.attributes.id, role: user.attributes.role})
+                done(null, user)
               } else {
                 done(null, false, {message: "Couldn't retrieve user"})
               }
@@ -52,9 +52,9 @@ module.exports = function (strapi) {
         (username, password, done) => {
           // Retrieve user
           strapi.services.userlogin.getUser(username, password)
-            .then(function (user) {
-              user = user.toJSON() || user
-              done(null, {id: user.user.id, email: user.email, role: user.user.role})
+            .then(function (userlogin) {
+              userlogin = userlogin.toJSON() || userlogin
+              done(null, {id: userlogin.user.id, email: userlogin.email, role: userlogin.user.role, status: userlogin.user.status})
             })
             .catch(function (err) {
               strapi.log.info('Login Error', err)
