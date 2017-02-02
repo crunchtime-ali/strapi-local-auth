@@ -54,7 +54,7 @@ module.exports = function (strapi) {
           strapi.services.userlogin.getUser(username, password)
             .then(function (userlogin) {
               userlogin = userlogin.toJSON() || userlogin
-              done(null, {id: userlogin.user.id, email: userlogin.email, role: userlogin.user.role, status: userlogin.user.status})
+              done(null, {id: userlogin.user.id, email: userlogin.email, role: userlogin.user.role, status: userlogin.user.status, isBuyer: userlogin.user.isBuyer, isSeller: userlogin.user.isSeller})
             })
             .catch(function (err) {
               strapi.log.info('Login Error', err)
