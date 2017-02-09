@@ -30,7 +30,7 @@ module.exports = function (strapi) {
         })
 
         passport.deserializeUser(function (userSession, done) {
-          strapi.services.jsonapi.fetch(strapi.models.user, {id: userSession.id}, { include:[] })
+          strapi.services.jsonapi.fetch(strapi.models.user, {id: userSession.id}, { include:['userlogins'] })
             .then(function (user) {
               if (user !== false && user !== null) {
                 done(null, user)
