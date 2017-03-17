@@ -62,7 +62,8 @@ module.exports = function (strapi) {
                 isBuyer: userlogin.user.isBuyer,
                 isSeller: userlogin.user.isSeller,
                 isBlocked: userlogin.user.isBlocked,
-                isValidated: userlogin.user.isValidated
+                isValidated: userlogin.user.isValidated,
+                mandateReference: userlogin.user.mandateReference
               })
             })
             .catch(function (err) {
